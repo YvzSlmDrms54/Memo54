@@ -1,2 +1,2 @@
-# dino54
-Google's dino game but different.
+# Memo54
+A simple memory game
