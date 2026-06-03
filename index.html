@@ -555,6 +555,27 @@ function syncSpecialTime(v){ specialTime=parseInt(v); document.getElementById('s
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────
 function shuffle(arr){ const a=[...arr]; for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+// Yan yana (yatay/dikey) aynı değer olmayacak şekilde karıştırır
+function shuffleNoAdj(arr, cols){
+  const rows = Math.ceil(arr.length / cols);
+  let result, tries = 0;
+  do {
+    result = shuffle([...arr]);
+    tries++;
+  } while(tries < 2000 && hasAdj(result, cols, rows));
+  return result;
+}
+function hasAdj(arr, cols, rows){
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      const i = r*cols+c;
+      if(c+1 < cols   && arr[i]===arr[i+1])    return true; // sağ
+      if(r+1 < rows   && arr[i]===arr[i+cols]) return true; // alt
+    }
+  }
+  return false;
+}
 function resetCounters(){ moves=0; matches=0; selected=[]; locked=false; placedCorrect=0; document.getElementById('move-count').textContent='0'; document.getElementById('match-count').textContent='0'; document.getElementById('score-num').textContent='0'; }
 
 // ─── MODE 1 ───────────────────────────────────────────────────────────────
@@ -573,7 +594,7 @@ function buildMode1(){
   document.getElementById('ready-btn').style.display='none';
 
   // 8 meyve × 2 = 16 kart, 4×4 grid — her meyveden tam 2 tane
-  const pairIds = shuffle([0,1,2,3,4,5,6,7, 0,1,2,3,4,5,6,7]); // 16 eleman
+  const pairIds = shuffleNoAdj([0,1,2,3,4,5,6,7, 0,1,2,3,4,5,6,7], 4); // 4×4, yan yana aynı yok
   cards = pairIds.map((pairId, i) => ({
     id: i,
     pairId,
