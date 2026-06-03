@@ -572,16 +572,8 @@ function buildMode1(){
   document.getElementById('timer-wrap').classList.remove('visible');
   document.getElementById('ready-btn').style.display='none';
 
-  // 8 meyve × 3 çift = 24 kart (her meyve tam 3 kez çiftlenir → toplam 12 çift)
-  // Hepsini 3'e böldük: her meyve 3 defadan değil, 8 meyve × 3 = 24 kart = 12 çift
-  // Doğru yol: 8 meyve, her birinden 3 kart → ama çiftler 2'şer: 8×2=16 kart ya da 12×2=24.
-  // 12 çift, 8 belirgin meyve: her meyveyi 1-2 kez kullan
-  // Basit ve hatasız: 8 meyveyi döngüyle al → [0,1,2,3,4,5,6,7,0,1,2,3] = 12 meyve
-  const pool = [];
-  for(let i=0;i<12;i++) pool.push(i % FRUITS_M1.length); // pairId: 0-7 döngüsel
-
-  // Her pairId'den tam 2 kart — kesinlikle 12 çift
-  const pairIds = shuffle([...pool, ...pool]); // 24 eleman, her id'den 2 tane
+  // 8 meyve × 2 = 16 kart, 4×4 grid — her meyveden tam 2 tane
+  const pairIds = shuffle([0,1,2,3,4,5,6,7, 0,1,2,3,4,5,6,7]); // 16 eleman
   cards = pairIds.map((pairId, i) => ({
     id: i,
     pairId,
@@ -590,12 +582,12 @@ function buildMode1(){
     matched: false
   }));
 
-  totalPairs = 12;
+  totalPairs = 8;
   document.getElementById('match-total').textContent = totalPairs;
   resetCounters();
 
   const grid = document.getElementById('card-grid');
-  grid.style.gridTemplateColumns = 'repeat(6,90px)';
+  grid.style.gridTemplateColumns = 'repeat(4,90px)';
   grid.innerHTML = '';
   cards.forEach((c,i) => {
     const el = document.createElement('div');
