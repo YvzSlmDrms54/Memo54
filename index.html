@@ -239,7 +239,7 @@ body {
 
 .card-face { position:absolute; inset:0; border-radius:16px; display:flex; align-items:center; justify-content:center; backface-visibility:hidden; -webkit-backface-visibility:hidden; }
 .card-front { background:linear-gradient(135deg,#2d3436,#636e72); border:2px solid rgba(255,255,255,.1); font-size:2rem; color:rgba(255,255,255,.15); box-shadow:0 4px 16px rgba(0,0,0,.3); }
-.card-back  { background:linear-gradient(135deg,#fdcb6e,#e17055); border:2px solid rgba(255,255,255,.3); transform:rotateY(180deg); font-size:2.6rem; box-shadow:0 4px 16px rgba(0,0,0,.3); }
+.card-back  { background:linear-gradient(135deg,#00b894,#27ae60); border:2px solid rgba(255,255,255,.3); transform:rotateY(180deg); font-size:2.6rem; box-shadow:0 4px 16px rgba(0,0,0,.3); }
 .card.matched .card-back { background:linear-gradient(135deg,#55efc4,#00b894); border-color:#00b894; }
 
 /* ── MODE 2 PLACEMENT ── */
@@ -252,7 +252,7 @@ body {
   display:flex; align-items:center; justify-content:center; font-size:2.4rem;
   transition:border-color .2s, background .2s, transform .15s;
 }
-.place-slot.preview-show { background:linear-gradient(135deg,#fdcb6e,#e17055); border:2px solid rgba(255,255,255,.3); box-shadow:0 4px 16px rgba(0,0,0,.3); }
+.place-slot.preview-show { background:linear-gradient(135deg,#00b894,#27ae60); border:2px solid rgba(255,255,255,.3); box-shadow:0 4px 16px rgba(0,0,0,.3); }
 .place-slot.drag-over    { border-color:#a29bfe; background:rgba(162,155,254,.2); transform:scale(1.05); }
 .place-slot.correct      { background:linear-gradient(135deg,#55efc4,#00b894); border-color:#00b894; border-style:solid; animation:matchPop .4s ease; }
 .place-slot.wrong        { animation:slotWrong .4s ease; }
@@ -678,7 +678,7 @@ function buildMode2(){
   resetCounters();
 
   previewTotal = difficulty==='special' ? specialTime : cfg.time;
-  slotFruits = shuffle(FRUITS24.slice(0,totalSlots));
+  slotFruits = shuffleNoAdj(FRUITS24.slice(0,totalSlots), cfg.cols);
 
   // grid columns
   document.getElementById('place-grid').style.gridTemplateColumns=`repeat(${cfg.cols},86px)`;
