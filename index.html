@@ -453,8 +453,12 @@ body {
 
 <script>
 // ─── CONSTANTS ───────────────────────────────────────────────────────────
-const FRUITS24 = ['🍎','🍊','🍋','🍇','🍓','🍑','🍍','🥝','🍒','🍉','🍌','🫐',
-                  '🍈','🍐','🥭','🍅','🥥','🫒','🍏','🍆','🥑','🌽','🥕','🍄'];
+// Mod 1: 8 çok belirgin, karıştırılması zor meyve
+const FRUITS_M1 = ['🍎','🍊','🍋','🍇','🍓','🍍','🍒','🍉'];
+
+// Mod 2: 16 farklı meyve (Zor/Özel için)
+const FRUITS24  = ['🍎','🍊','🍋','🍇','🍓','🍑','🍍','🥝','🍒','🍉','🍌','🫐',
+                   '🍈','🍐','🥭','🍅','🥥','🫒','🍏','🍆','🥑','🌽','🥕','🍄'];
 
 const DIFF_CONFIG = {
   easy:    { cols:3, rows:2, count:6,  time:10 },
@@ -568,22 +572,36 @@ function buildMode1(){
   document.getElementById('timer-wrap').classList.remove('visible');
   document.getElementById('ready-btn').style.display='none';
 
-  totalPairs=12;
-  document.getElementById('match-total').textContent=totalPairs;
+  // 8 meyve × 3 çift = 24 kart (her meyve tam 3 kez çiftlenir → toplam 12 çift)
+  // Hepsini 3'e böldük: her meyve 3 defadan değil, 8 meyve × 3 = 24 kart = 12 çift
+  // Doğru yol: 8 meyve, her birinden 3 kart → ama çiftler 2'şer: 8×2=16 kart ya da 12×2=24.
+  // 12 çift, 8 belirgin meyve: her meyveyi 1-2 kez kullan
+  // Basit ve hatasız: 8 meyveyi döngüyle al → [0,1,2,3,4,5,6,7,0,1,2,3] = 12 meyve
+  const pool = [];
+  for(let i=0;i<12;i++) pool.push(i % FRUITS_M1.length); // pairId: 0-7 döngüsel
+
+  // Her pairId'den tam 2 kart — kesinlikle 12 çift
+  const pairIds = shuffle([...pool, ...pool]); // 24 eleman, her id'den 2 tane
+  cards = pairIds.map((pairId, i) => ({
+    id: i,
+    pairId,
+    fruit: FRUITS_M1[pairId],
+    flipped: false,
+    matched: false
+  }));
+
+  totalPairs = 12;
+  document.getElementById('match-total').textContent = totalPairs;
   resetCounters();
 
-  const pool=shuffle(FRUITS24).slice(0,12);
-  const pairs=shuffle([...pool,...pool]);
-  cards=pairs.map((fruit,i)=>({id:i,fruit,flipped:false,matched:false}));
-
-  const grid=document.getElementById('card-grid');
-  grid.style.gridTemplateColumns='repeat(6,90px)';
-  grid.innerHTML='';
-  cards.forEach((c,i)=>{
-    const el=document.createElement('div');
-    el.className='card'; el.id='card-'+i;
-    el.innerHTML=`<div class="card-face card-front">🂠</div><div class="card-face card-back">${c.fruit}</div>`;
-    el.addEventListener('click',()=>onCardClick(i));
+  const grid = document.getElementById('card-grid');
+  grid.style.gridTemplateColumns = 'repeat(6,90px)';
+  grid.innerHTML = '';
+  cards.forEach((c,i) => {
+    const el = document.createElement('div');
+    el.className = 'card'; el.id = 'card-'+i;
+    el.innerHTML = `<div class="card-face card-front">🂠</div><div class="card-face card-back">${c.fruit}</div>`;
+    el.addEventListener('click', ()=>onCardClick(i));
     grid.appendChild(el);
   });
   showScreen('game-screen');
@@ -601,7 +619,8 @@ function onCardClick(i){
 
 function checkMatch1(){
   const [a,b]=selected;
-  if(cards[a].fruit===cards[b].fruit){
+  // pairId ile karşılaştır — emoji string sorunlarını önler
+  if(cards[a].pairId===cards[b].pairId){
     cards[a].matched=cards[b].matched=true;
     document.getElementById('card-'+a).classList.add('matched');
     document.getElementById('card-'+b).classList.add('matched');
